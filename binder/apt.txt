@@ -1,0 +1,7 @@
+htop
+vim
+curl
+wget
+net-tools
+nodejs
+openjdk-8-jdk

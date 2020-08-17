@@ -1,0 +1,22 @@
+qq=autos[ ,-1]
+boxplot(qq$MPG)
+boxplot(qq$Cylinder)
+boxplot(qq$EngineD)
+boxplot(qq$Horsepow)
+boxplot(qq$Weight)
+boxplot(qq$Accelera)
+
+qq=qq[,-c(7,8)]
+cor(qq)
+pc=prcomp(qq,scale. = T)
+summary(pc)
+plot(pc)
+round(cor(qq, pc$x[,1:2]),2)
+plot(pc$x[,1], pc$x[,2],type = "n")
+text(pc$x[,1], pc$x[,2],labels =autos$Origin, col=4 )
+grid(col=2)
+plot(pc$x[,1], pc$x[,2],type = "n")
+text(pc$x[,1], pc$x[,2],labels =autos$Year, col=4 )
+biplot(pc, xlab="cp1",ylab="cp2",xlabs=autos$Origin, scale=0)
+abline(h=0,v=0,col="blue",lty=5)
+grid(col="green")

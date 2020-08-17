@@ -1,0 +1,213 @@
+# Instalação dos pacotes
+# BETS Brazilian Econometrics Time Series
+# URCA Unit Root and Cointegration Test for Time Series Data 
+# TSA  Time Series Analysis
+# forecast Forecasr functions for Time Series and Linear Models
+# tmtest Testig Linear Regression Model
+# normtest Tests for Normality
+# FinTS Analysis od Financial Time Series
+# xlsx (read, write format Excel)
+# fpp2 Rob J Hyndman and George Athanasopoulos
+#  TSstudio 
+
+install.packages(c("BETS", "urca", "TSA", "forecast", "tmtest", "normtest",
+                   "FinTS", "xlsx", "fpp2", "TSstudio"))
+
+library(BETS)
+library(urca)
+library(TSA)
+library(forecast)
+library(tmtest)
+library(normtest)
+library(xlsx)
+library(fpp2)
+library(TSstudio)             
+      
+
+data("AirPassengers")
+class(AirPassengers)
+
+
+autoplot(AirPassengers, xlab = "ano", 
+              ylab="Vendas de Passagens Aéreas",
+         main = "Passageiros Mensais (000´s) de 1949 a 1960", 
+         col ="blue", lwd=2)
+
+ggseasonplot(AirPassengers, year.labels = TRUE, year.label.left = TRUE)+
+  ylab("Vendas de Passagens Aéreas")+ xlab("Ano")+
+  ggtitle("Passageiros Mensais (000´s) de 1949 a 1960")
+
+
+boxplot(AirPassengers~cycle(AirPassengers),col = rep(c("gold",
+                                           "darkgreen",
+                                           "blue", "red"), each=3),
+        xlab="Mês", ylab= "Vendas de Passagens Aéreas",
+        main ="Passageiros Mensais (000´s) de 1949 a 1960",
+        par(bg="white"))
+
+# Alternativamente (pacote TSstudio)
+
+ts_seasonal(AirPassengers, type = "box")
+
+
+# Decomposição da série
+
+autoplot(decompose(AirPassengers, type = "multiplicative"))
+
+corrgram(AirPassengers, lag.max=36)
+
+ggAcf(AirPassengers, lag.max = 36)
+
+# teste ADF
+
+library(urca)
+
+adf.air <- ur.df(y = AirPassengers, type = c("drift"), 
+                      lags = 24, selectlags = "AIC")
+
+adf.air@teststat  #estatística de teste
+
+adf.air@cval  #valores tabulados por MacKinnon (1996)
+
+# mais informações sobre o teste RU
+
+summary(adf.air)
+
+# Diferenciação
+
+a1 <- autoplot(diff(AirPassengers, lag = 1, differences = 1))+
+        ylab("diff(AirPassengers)")+
+        ggtitle("ST de vendas de passagens aéreas (em milhares) com uma diferença")
+
+a2 <- ggAcf(diff(AirPassengers, lag = 1, differences = 1),
+              lag.max = 36)+
+        ggtitle("ACF: ST de vendas de passagens aéreas (em milhares) com uma diferença")
+
+library(gridExtra)
+grid.arrange(a1, a2, nrow = 2)
+
+# Passando o log (para reduzir a heterocedasticidade)
+
+ts.plot(diff(log(AirPassengers),lag = 1,differences = 1))
+
+
+l1 <- autoplot((diff(log(AirPassengers),lag = 1,differences = 1)))+
+        ylab("diff(log(AirPassengers)")+
+        ggtitle("Log da ST de vendas de passagens aéreas (em milhares) com uma diferença")
+
+
+l2 <- ggAcf(diff(log(AirPassengers), lag = 1, differences = 1),
+              lag.max=48)+
+              ggtitle("ACF: Log da ST de vendas de passagens aéreas (em milhares)com uma diferença")
+
+
+grid.arrange(l1, l2, nrow =2)
+
+# Aumentando para lag =12
+
+k1 <- autoplot(diff(diff(log(AirPassengers), lag = 1, differences = 1),
+             lag = 12, differences = 1))+
+             ylab("diff(log(AirPassengers) lag =12")+
+  ggtitle("Log da ST de vendas de passagens aéreas(em milhares) com uma diferença")
+
+k2 <- ggAcf(diff(diff(log(AirPassengers), lag = 1, differences = 1),
+            lag = 12, differences = 1), lag.max = 48)+
+            ylab("diff(log(AirPassengers) lag =12")+
+  ggtitle("ACF: Log da ST de vendas de passagens aéreas(em milhares) com uma diferença")
+
+grid.arrange(k1, k2, nrow =2)      
+
+# Revisitando ADF test
+
+adf.air2 <- ur.df(diff(diff(log(AirPassengers), lag = 1), lag = 12),
+                  type = "drift", lags = 24, selectlags = "AIC")
+adf.air2@teststat  #estatística de teste
+
+adf.air2@cval  #valores tabulados por MacKinnon (1996)
+
+# Especificação
+
+acf <- ggAcf(diff(diff(log(AirPassengers), lag = 1, differences = 1),
+                   lag = 12, differences = 1), lag.max = 48)
+
+pacf <- ggPacf (diff(diff(log(AirPassengers), lag = 1, differences = 1),
+                   lag = 12, differences = 1), lag.max = 48)
+
+grid.arrange(acf, pacf, nrow = 2)
+
+library("forecast")
+
+#PRIMEIRO MODELO SARIMA(1,1,1)(1,1,1)12
+
+fit.air.1 <- Arima(AirPassengers, order = c(1,1,1), seasonal = c(1,1,1),
+                 method = "ML", lambda = 0)
+fit.air.1
+
+# teste de significância para o modelo SARIMA(1,1,1)(1,1,1)12
+
+t_test(fit.air.1)
+
+# SEGUNDO MODELO SARIMA (0,1,1)(0,1,1)12
+
+fit.air.2 <- Arima(AirPassengers, order = c(0,1,1), seasonal = c(0,1,1),
+                 method = "ML", lambda=0)
+fit.air.2
+
+t_test(fit.air.2)
+
+
+#utizando a função auto.arima()pacote fpp2
+
+auto.arima(AirPassengers, seasonal= TRUE, stepwise = FALSE, approximation = FALSE)
+
+
+fit.air.3 <- Arima(AirPassengers, order = c(2,1,1), seasonal = c(0,1,0),
+                 method = "ML", lambda=0)
+fit.air.3
+
+t_test(fit.air.3)
+
+AIC(fit.air.1)
+AIC(fit.air.2)
+AIC(fit.air.3)
+
+#Ljung Box
+
+diag <- tsdiag(fit.air.3, gof.lag = 20)
+
+Box.test(x = fit.air.3$residuals, lag = 12,type = "Lj", fitdf=3)
+
+
+autoplot(fit.air.3$residuals) + theme_minimal()+
+  ylab("Resíduos")+
+  ggtitle("ARIMA(2,1,1)(0,1,0)12 - Resíduos")
+
+
+require(FinTS)
+ArchTest(fit.air.3$residuals,lags = 36)
+
+#
+require(normtest)
+jb.norm.test(fit.air.3$residuals, nrepl=5000)
+
+# subseção 4.5.4 ---------------------------------------------------------
+
+# previsão
+require(forecast)
+prev <- forecast(object = fit.air.3, h=24, level = 0.95, PI = FALSE)
+plot(prev)
+
+#
+accuracy(fit.air.3)
+
+
+
+# Seção 4.6 ---------------------------------------------------------
+
+# exportando previsões
+# csv
+write.csv2(data.frame(prev),"previsao.csv")
+
+# xlsx
+require(xlsx)
+write.xlsx(data.frame(prev),"previsao.xlsx")

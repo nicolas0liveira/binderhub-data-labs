@@ -38,19 +38,26 @@ jupyter labextension install @jupyterlab/plotly-extension --no-build
 jupyter labextension install @jupyterlab/toc --no-build 
 
 # Jupyter/Jupyterlab extension for proxying internal applications
-jupyter serverextension enable --sys-prefix jupyter_server_proxy
-jupyter labextension install jupyterlab-server-proxy
+#jupyter serverextension enable --sys-prefix jupyter_server_proxy
+#jupyter labextension install jupyterlab-server-proxy
 
 # JupyterLab extension mimerenderer to render HTML files in IFrame Tab. https://github.com/mflevine/jupyterlab_html
-jupyter labextension install @mflevine/jupyterlab_html --no-build 
+#jupyter labextension install @mflevine/jupyterlab_html --no-build 
 
 # Building everything up
 jupyter lab build --dev
 
 
 
-
-
 ###############################################################
 #          /jupyter/jupyterlab extensions/kernels              #
 ###############################################################
+
+
+
+###############################################################
+#                        GETTING SOME DATA                     #
+###############################################################
+
+#bikes-2016.csv
+wget -q -O bikes-2016.csv "https://data.stadt-zuerich.ch/dataset/verkehrszaehlungen_werte_fussgaenger_velo/resource/ed354dde-c0f9-43b3-b05b-08c5f4c3f65a/download/2016verkehrszaehlungenwertefussgaengervelo.csv"

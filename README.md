@@ -1,13 +1,13 @@
 # Experimentos
 **Apenas experimentações**
 
-# binderhub-data-garage
+# binderhub-data-labs
 
 A repository for launching Notebooks ([R](https://www.r-project.org/), Python) on [binderhub](https://github.com/jupyterhub/binderhub) instances.
 
 To know more, please, visit [The Data Society](https://github.com/thedatasociety).
 
-[![launch @ gke.mybinder.org][badge-jupyterlab-gke-mybinder-org]](https://gke.mybinder.org/v2/gh/nicolas0liveira/data-garage.git/master?urlpath=lab)
+[![launch @ gke.mybinder.org][badge-jupyterlab-gke-mybinder-org]](https://gke.mybinder.org/v2/gh/nicolas0liveira/binderhub-data-labs.git/master?urlpath=lab)
 
 
 <!-- icons -->

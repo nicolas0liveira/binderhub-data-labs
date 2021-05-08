@@ -1,0 +1,6 @@
+
+numpy
+boto
+requests
+pandas
+pillow
